@@ -20,20 +20,19 @@ import {
 } from "recharts"
 import type { Lote } from "@/src/types"
 
-// Mock data
 const lots: Lote[] = [
-  { id: "1", name: "Lote A1", crop: "Milho", expectedProduction: 200, actualProduction: 185, estimatedCost: 12000, actualCost: 11500, salePrice: 85, revenue: 15725, profit: 4225, margin: 26.9, status: "Ativo", propertyName: "Fazenda Sao Jose" },
-  { id: "2", name: "Lote B2", crop: "Soja", expectedProduction: 150, actualProduction: 160, estimatedCost: 9000, actualCost: 8800, salePrice: 120, revenue: 19200, profit: 10400, margin: 54.2, status: "Ativo", propertyName: "Fazenda Boa Vista" },
-  { id: "3", name: "Lote C3", crop: "Cafe", expectedProduction: 80, actualProduction: 75, estimatedCost: 15000, actualCost: 16200, salePrice: 180, revenue: 13500, profit: -2700, margin: -20.0, status: "Ativo", propertyName: "Fazenda Verde" },
-  { id: "4", name: "Lote D4", crop: "Trigo", expectedProduction: 120, actualProduction: 130, estimatedCost: 7500, actualCost: 7200, salePrice: 70, revenue: 9100, profit: 1900, margin: 20.9, status: "Finalizado", propertyName: "Fazenda Sao Jose" },
-  { id: "5", name: "Lote E5", crop: "Milho", expectedProduction: 180, actualProduction: 190, estimatedCost: 10000, actualCost: 9800, salePrice: 85, revenue: 16150, profit: 6350, margin: 39.3, status: "Ativo", propertyName: "Fazenda Boa Vista" },
+  { id: "1", name: "Lote A1", crop: "Milho", production: 185, cost: 11500, salePrice: 85, revenue: 15725, profit: 4225, margin: 26.9, status: "Ativo", propertyName: "Fazenda Sao Jose" },
+  { id: "2", name: "Lote B2", crop: "Soja", production: 160, cost: 8800, salePrice: 120, revenue: 19200, profit: 10400, margin: 54.2, status: "Ativo", propertyName: "Fazenda Boa Vista" },
+  { id: "3", name: "Lote C3", crop: "Cafe", production: 75, cost: 16200, salePrice: 180, revenue: 13500, profit: -2700, margin: -20.0, status: "Ativo", propertyName: "Fazenda Verde" },
+  { id: "4", name: "Lote D4", crop: "Trigo", production: 130, cost: 7200, salePrice: 70, revenue: 9100, profit: 1900, margin: 20.9, status: "Finalizado", propertyName: "Fazenda Sao Jose" },
+  { id: "5", name: "Lote E5", crop: "Milho", production: 190, cost: 9800, salePrice: 85, revenue: 16150, profit: 6350, margin: 39.3, status: "Ativo", propertyName: "Fazenda Boa Vista" },
 ]
 
 const profitByLot = lots.map((l) => ({
   name: l.name,
   lucro: l.profit,
   receita: l.revenue,
-  custo: l.actualCost,
+  custo: l.cost,
 }))
 
 const profitOverTime = [
@@ -58,10 +57,17 @@ const profitByCrop = [
   { crop: "Cafe", lucro: -2700 },
 ]
 
+const tooltipStyle = {
+  backgroundColor: "var(--card)",
+  border: "1px solid var(--border)",
+  borderRadius: "8px",
+  color: "var(--foreground)",
+}
+
 export default function DashboardPage() {
   const totalProfit = lots.reduce((sum, l) => sum + l.profit, 0)
   const totalRevenue = lots.reduce((sum, l) => sum + l.revenue, 0)
-  const totalCost = lots.reduce((sum, l) => sum + l.actualCost, 0)
+  const totalCost = lots.reduce((sum, l) => sum + l.cost, 0)
   const mostProfitableCrop = profitByCrop.reduce((prev, curr) => (curr.lucro > prev.lucro ? curr : prev))
   const mostProfitableLot = lots.reduce((prev, curr) => (curr.profit > prev.profit ? curr : prev))
 
@@ -115,17 +121,9 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={profitByLot}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis dataKey="name" className="text-xs" tick={{ fill: 'var(--muted-foreground)' }} />
-                  <YAxis className="text-xs" tick={{ fill: 'var(--muted-foreground)' }} />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                    contentStyle={{
-                      backgroundColor: 'var(--card)',
-                      border: '1px solid var(--border)',
-                      borderRadius: '8px',
-                      color: 'var(--foreground)',
-                    }}
-                  />
+                  <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                  <YAxis tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                  <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={tooltipStyle} />
                   <Bar dataKey="lucro" fill="var(--chart-1)" radius={[4, 4, 0, 0]} name="Lucro" />
                 </BarChart>
               </ResponsiveContainer>
@@ -135,18 +133,10 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={profitOverTime}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis dataKey="month" tick={{ fill: 'var(--muted-foreground)' }} />
-                  <YAxis tick={{ fill: 'var(--muted-foreground)' }} />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                    contentStyle={{
-                      backgroundColor: 'var(--card)',
-                      border: '1px solid var(--border)',
-                      borderRadius: '8px',
-                      color: 'var(--foreground)',
-                    }}
-                  />
-                  <Line type="monotone" dataKey="lucro" stroke="var(--chart-1)" strokeWidth={2} dot={{ fill: 'var(--chart-1)', r: 3 }} name="Lucro" />
+                  <XAxis dataKey="month" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                  <YAxis tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                  <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={tooltipStyle} />
+                  <Line type="monotone" dataKey="lucro" stroke="var(--chart-1)" strokeWidth={2.5} dot={{ fill: "var(--chart-1)", r: 3 }} name="Lucro" />
                 </LineChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -158,22 +148,10 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={profitByCrop} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis type="number" tick={{ fill: 'var(--muted-foreground)' }} />
-                  <YAxis dataKey="crop" type="category" width={60} tick={{ fill: 'var(--muted-foreground)' }} />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                    contentStyle={{
-                      backgroundColor: 'var(--card)',
-                      border: '1px solid var(--border)',
-                      borderRadius: '8px',
-                      color: 'var(--foreground)',
-                    }}
-                  />
-                  <Bar dataKey="lucro" radius={[0, 4, 4, 0]} name="Lucro">
-                    {profitByCrop.map((entry, index) => (
-                      <rect key={index} fill={entry.lucro >= 0 ? 'var(--chart-1)' : 'var(--destructive)'} />
-                    ))}
-                  </Bar>
+                  <XAxis type="number" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                  <YAxis dataKey="crop" type="category" width={60} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                  <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={tooltipStyle} />
+                  <Bar dataKey="lucro" radius={[0, 4, 4, 0]} name="Lucro" fill="var(--chart-2)" />
                 </BarChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -206,7 +184,7 @@ export default function DashboardPage() {
                             </div>
                           </td>
                           <td className="py-3 px-2 text-foreground">{lot.crop}</td>
-                          <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.actualCost)}</td>
+                          <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.cost)}</td>
                           <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.revenue)}</td>
                           <td className={`py-3 px-2 text-right font-semibold ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                             {formatCurrency(lot.profit)}

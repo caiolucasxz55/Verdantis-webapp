@@ -1,21 +1,28 @@
 // User Role Type - Only Farmer
 export type UserRole = "produtor"
 
-// Lot Interface with profitability
+// Lot Interface with profitability (no estimated fields)
 export interface Lote {
   id: string
   name: string
   crop: string
-  expectedProduction: number
-  actualProduction: number
-  estimatedCost: number
-  actualCost: number
+  production: number
+  cost: number
   salePrice: number
   revenue: number
   profit: number
   margin: number
   status: "Ativo" | "Finalizado" | "Em Preparo"
   propertyName: string
+}
+
+// Lot Form Data (solid, real-world fields only)
+export interface LoteFormData {
+  name: string
+  cropId: string
+  production: number
+  cost: number
+  salePrice: number
 }
 
 // KPI Card Props
@@ -47,15 +54,13 @@ export interface ChartCardProps {
   children: React.ReactNode
 }
 
-// Lot Form Data
-export interface LoteFormData {
+// Crop Market Data for Analytics
+export interface CropMarketData {
+  id: string
   name: string
-  crop: string
-  expectedProduction: number
-  actualProduction: number
-  estimatedCost: number
-  actualCost: number
-  salePrice: number
+  imageUrl: string
+  pricePerSack: number
+  priceTrend: "up" | "down" | "stable"
 }
 
 // Crop Data Interface
@@ -84,6 +89,9 @@ export interface Cultivo extends CropData {
   expectedYield: number
   actualYield?: number
   notes?: string
+  isComplete?: boolean
+  traceabilityHash?: TraceabilityHash
+  events?: TraceabilityEvent[]
 }
 
 export interface CultivoFormData {
@@ -96,6 +104,24 @@ export interface CultivoFormData {
   area: number
   expectedYield: number
   notes?: string
+}
+
+// Traceability Event System
+export type TraceabilityEventType = "INPUT_ADDITION" | "IRRIGATION" | "HARVEST" | "OTHER"
+
+export interface TraceabilityEvent {
+  id: string
+  lotId: string
+  type: TraceabilityEventType
+  description: string
+  timestamp: Date
+}
+
+export interface TraceabilityHash {
+  lotId: string
+  hash: string
+  generatedAt: Date
+  eventCount: number
 }
 
 // Chart Data Types

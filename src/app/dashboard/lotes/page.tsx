@@ -10,12 +10,12 @@ import Link from "next/link"
 import type { Lote } from "@/src/types"
 
 const lots: Lote[] = [
-  { id: "1", name: "Lote A1", crop: "Milho", expectedProduction: 200, actualProduction: 185, estimatedCost: 12000, actualCost: 11500, salePrice: 85, revenue: 15725, profit: 4225, margin: 26.9, status: "Ativo", propertyName: "Fazenda Sao Jose" },
-  { id: "2", name: "Lote B2", crop: "Soja", expectedProduction: 150, actualProduction: 160, estimatedCost: 9000, actualCost: 8800, salePrice: 120, revenue: 19200, profit: 10400, margin: 54.2, status: "Ativo", propertyName: "Fazenda Boa Vista" },
-  { id: "3", name: "Lote C3", crop: "Cafe", expectedProduction: 80, actualProduction: 75, estimatedCost: 15000, actualCost: 16200, salePrice: 180, revenue: 13500, profit: -2700, margin: -20.0, status: "Ativo", propertyName: "Fazenda Verde" },
-  { id: "4", name: "Lote D4", crop: "Trigo", expectedProduction: 120, actualProduction: 130, estimatedCost: 7500, actualCost: 7200, salePrice: 70, revenue: 9100, profit: 1900, margin: 20.9, status: "Finalizado", propertyName: "Fazenda Sao Jose" },
-  { id: "5", name: "Lote E5", crop: "Milho", expectedProduction: 180, actualProduction: 190, estimatedCost: 10000, actualCost: 9800, salePrice: 85, revenue: 16150, profit: 6350, margin: 39.3, status: "Ativo", propertyName: "Fazenda Boa Vista" },
-  { id: "6", name: "Lote F6", crop: "Alface", expectedProduction: 50, actualProduction: 48, estimatedCost: 3000, actualCost: 3200, salePrice: 55, revenue: 2640, profit: -560, margin: -21.2, status: "Em Preparo", propertyName: "Fazenda Verde" },
+  { id: "1", name: "Lote A1", crop: "Milho", production: 185, cost: 11500, salePrice: 85, revenue: 15725, profit: 4225, margin: 26.9, status: "Ativo", propertyName: "Fazenda Sao Jose" },
+  { id: "2", name: "Lote B2", crop: "Soja", production: 160, cost: 8800, salePrice: 120, revenue: 19200, profit: 10400, margin: 54.2, status: "Ativo", propertyName: "Fazenda Boa Vista" },
+  { id: "3", name: "Lote C3", crop: "Cafe", production: 75, cost: 16200, salePrice: 180, revenue: 13500, profit: -2700, margin: -20.0, status: "Ativo", propertyName: "Fazenda Verde" },
+  { id: "4", name: "Lote D4", crop: "Trigo", production: 130, cost: 7200, salePrice: 70, revenue: 9100, profit: 1900, margin: 20.9, status: "Finalizado", propertyName: "Fazenda Sao Jose" },
+  { id: "5", name: "Lote E5", crop: "Milho", production: 190, cost: 9800, salePrice: 85, revenue: 16150, profit: 6350, margin: 39.3, status: "Ativo", propertyName: "Fazenda Boa Vista" },
+  { id: "6", name: "Lote F6", crop: "Alface", production: 48, cost: 3200, salePrice: 55, revenue: 2640, profit: -560, margin: -21.2, status: "Em Preparo", propertyName: "Fazenda Verde" },
 ]
 
 const formatCurrency = (value: number) =>
@@ -61,8 +61,7 @@ export default function LotesPage() {
                     <tr className="border-b border-border">
                       <th className="text-left py-3 px-3 font-medium text-muted-foreground">Lote</th>
                       <th className="text-left py-3 px-3 font-medium text-muted-foreground">Cultura</th>
-                      <th className="text-right py-3 px-3 font-medium text-muted-foreground">Prod. Esperada</th>
-                      <th className="text-right py-3 px-3 font-medium text-muted-foreground">Prod. Real</th>
+                      <th className="text-right py-3 px-3 font-medium text-muted-foreground">Producao</th>
                       <th className="text-right py-3 px-3 font-medium text-muted-foreground">Custo</th>
                       <th className="text-right py-3 px-3 font-medium text-muted-foreground">Receita</th>
                       <th className="text-right py-3 px-3 font-medium text-muted-foreground">Lucro</th>
@@ -80,9 +79,8 @@ export default function LotesPage() {
                           </div>
                         </td>
                         <td className="py-3 px-3 text-foreground">{lot.crop}</td>
-                        <td className="py-3 px-3 text-right text-foreground">{lot.expectedProduction} sc</td>
-                        <td className="py-3 px-3 text-right text-foreground">{lot.actualProduction} sc</td>
-                        <td className="py-3 px-3 text-right text-foreground">{formatCurrency(lot.actualCost)}</td>
+                        <td className="py-3 px-3 text-right text-foreground">{lot.production} sc</td>
+                        <td className="py-3 px-3 text-right text-foreground">{formatCurrency(lot.cost)}</td>
                         <td className="py-3 px-3 text-right text-foreground">{formatCurrency(lot.revenue)}</td>
                         <td className={`py-3 px-3 text-right font-semibold ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                           {formatCurrency(lot.profit)}

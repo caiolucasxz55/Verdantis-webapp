@@ -3,6 +3,8 @@
 import { Topbar } from "@/src/components/topbar"
 import { PageContainer } from "@/src/components/page-container"
 import { ChartCard } from "@/src/components/chart-card"
+import { CropMarketCard } from "@/src/components/crop-market-card"
+import type { CropMarketData } from "@/src/types"
 import {
   BarChart,
   Bar,
@@ -15,6 +17,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts"
+
+const cropMarketData: CropMarketData[] = [
+  { id: "1", name: "Soja", imageUrl: "/crops/soybean.jpg", pricePerSack: 148.5, priceTrend: "up" },
+  { id: "2", name: "Milho", imageUrl: "/crops/corn.jpg", pricePerSack: 72.3, priceTrend: "down" },
+  { id: "3", name: "Trigo", imageUrl: "/crops/wheat.jpg", pricePerSack: 95.0, priceTrend: "stable" },
+  { id: "4", name: "Cafe", imageUrl: "/crops/coffee.jpg", pricePerSack: 1420.0, priceTrend: "up" },
+]
 
 const profitComparison = [
   { name: "Lote A1", lucro: 4225, custo: 11500, receita: 15725 },
@@ -70,9 +79,19 @@ const tooltipStyle = {
 export default function AnalyticsPage() {
   return (
     <>
-      <Topbar title="Analytics" description="Comparativos e insights de performance" />
+      <Topbar title="Analytics" description="Comparativos, insights e cotacoes de mercado" />
       <PageContainer>
         <div className="space-y-6">
+          {/* Crop Market Cards */}
+          <div>
+            <h2 className="text-sm font-semibold text-foreground mb-3">Cotacoes de Mercado</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {cropMarketData.map((crop) => (
+                <CropMarketCard key={crop.id} {...crop} />
+              ))}
+            </div>
+          </div>
+
           {/* Row 1: Profit comparison + Profit by crop */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ChartCard title="Comparativo de Lucro entre Lotes" description="Lucro liquido de cada lote">
