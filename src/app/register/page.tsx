@@ -3,180 +3,84 @@
 import type React from "react"
 import { Button } from "@/src/components/ui/button"
 import { Card } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
-import { Leaf, User, Building2, ArrowRight, Shield, CheckCircle2 } from "lucide-react"
+import { Leaf, ArrowRight, CheckCircle2, Shield } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import type { UserRole } from "@/src/types"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
     phone: "",
-    company: "",
   })
 
   const handleRegister = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    if (selectedRole && formData.password === formData.confirmPassword) {
-      // In a real app, you would send this to your backend
-      router.push(`/dashboard/${selectedRole}`)
+    if (formData.password === formData.confirmPassword) {
+      router.push("/dashboard")
     }
   }
 
-  const handleRoleSelect = (role: UserRole): void => {
-    setSelectedRole(role)
-  }
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background flex items-center justify-center p-4">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('/farmland-background.jpg')] bg-cover bg-center opacity-5"></div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[url('/farmland-background.jpg')] bg-cover bg-center opacity-[0.03]" />
 
-      <div className="w-full max-w-6xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+      <div className="w-full max-w-5xl relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Branding */}
-          <div className="space-y-8 animate-fade-in-left">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center animate-pulse-glow">
-                  <Leaf className="h-7 w-7 text-primary-foreground" />
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-11 w-11 rounded-lg bg-primary flex items-center justify-center">
+                  <Leaf className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <div>
-                  <span className="text-3xl font-bold text-foreground">Verdantis</span>
-                  <Badge variant="secondary" className="ml-2">
-                    VITS
-                  </Badge>
-                </div>
+                <span className="text-2xl font-bold text-foreground tracking-tight">Verdantis</span>
               </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-balance leading-tight">
+              <h1 className="text-4xl sm:text-5xl font-bold text-balance leading-[1.1] text-foreground">
                 Crie sua <span className="text-primary">conta</span>
               </h1>
-              <p className="text-xl text-muted-foreground text-pretty">
-                Junte-se ao futuro da rastreabilidade agrícola e transforme sua gestão.
+              <p className="text-lg text-muted-foreground leading-relaxed text-pretty">
+                Comece a controlar a lucratividade dos seus lotes e tome decisoes melhores para a sua producao.
               </p>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
+              {[
+                { icon: CheckCircle2, title: "Cadastro gratuito", desc: "Comece sem custos iniciais" },
+                { icon: Shield, title: "Dados protegidos", desc: "Seguranca e privacidade garantidas" },
+                { icon: Leaf, title: "Suporte completo", desc: "Equipe dedicada ao seu sucesso" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <item.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-medium text-foreground">{item.title}</div>
+                    <div className="text-sm text-muted-foreground">{item.desc}</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="font-semibold">Cadastro Gratuito</div>
-                  <div className="text-sm text-muted-foreground">Comece sem custos iniciais</div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold">Dados Protegidos</div>
-                  <div className="text-sm text-muted-foreground">Segurança blockchain garantida</div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Leaf className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold">Suporte Completo</div>
-                  <div className="text-sm text-muted-foreground">Equipe dedicada ao seu sucesso</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border/20">
-              <a
-                href="https://challenge-oracle-hazel.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center space-x-2"
-              >
-                <span>Saiba mais sobre o Verdantis →</span>
-              </a>
+              ))}
             </div>
           </div>
 
           {/* Right Side - Register Form */}
-          <Card className="p-8 shadow-2xl border-border/20 animate-fade-in-right">
+          <Card className="p-8 shadow-xl border-border/50">
             <div className="space-y-6">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Criar Conta</h2>
-                <p className="text-sm text-muted-foreground">Preencha os dados para começar</p>
+                <h2 className="text-2xl font-bold text-foreground">Criar Conta</h2>
+                <p className="text-sm text-muted-foreground">Preencha os dados para comecar</p>
               </div>
 
-              {/* Role Selection */}
-              <div className="space-y-3">
-                <Label>Tipo de Usuário</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => handleRoleSelect("produtor")}
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
-                      selectedRole === "produtor"
-                        ? "border-primary bg-primary/5 shadow-lg"
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center space-y-2">
-                      <div
-                        className={`h-12 w-12 rounded-full flex items-center justify-center ${
-                          selectedRole === "produtor" ? "bg-primary text-primary-foreground" : "bg-muted"
-                        }`}
-                      >
-                        <User className="h-6 w-6" />
-                      </div>
-                      <div className="text-center">
-                        <div className="font-semibold">Produtor</div>
-                        <div className="text-xs text-muted-foreground">Gestão da fazenda</div>
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRoleSelect("gestor")}
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
-                      selectedRole === "gestor"
-                        ? "border-primary bg-primary/5 shadow-lg"
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center space-y-2">
-                      <div
-                        className={`h-12 w-12 rounded-full flex items-center justify-center ${
-                          selectedRole === "gestor" ? "bg-primary text-primary-foreground" : "bg-muted"
-                        }`}
-                      >
-                        <Building2 className="h-6 w-6" />
-                      </div>
-                      <div className="text-center">
-                        <div className="font-semibold">Gestor</div>
-                        <div className="text-xs text-muted-foreground">Analytics e relatórios</div>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Register Form */}
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -184,15 +88,13 @@ export default function RegisterPage() {
                     <Input
                       id="name"
                       name="name"
-                      type="text"
-                      placeholder="João Silva"
+                      placeholder="Joao Silva"
                       value={formData.name}
                       onChange={handleInputChange}
                       required
                       className="h-11"
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="phone">Telefone</Label>
                     <Input
@@ -222,22 +124,6 @@ export default function RegisterPage() {
                   />
                 </div>
 
-                {selectedRole === "gestor" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="company">Empresa</Label>
-                    <Input
-                      id="company"
-                      name="company"
-                      type="text"
-                      placeholder="Nome da empresa"
-                      value={formData.company}
-                      onChange={handleInputChange}
-                      required
-                      className="h-11"
-                    />
-                  </div>
-                )}
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="password">Senha</Label>
@@ -245,21 +131,20 @@ export default function RegisterPage() {
                       id="password"
                       name="password"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="Sua senha"
                       value={formData.password}
                       onChange={handleInputChange}
                       required
                       className="h-11"
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="Repita a senha"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       required
@@ -268,32 +153,26 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-2">
+                <div className="flex items-start gap-2">
                   <input type="checkbox" required className="mt-1 rounded border-border" />
                   <span className="text-sm text-muted-foreground">
                     Concordo com os{" "}
-                    <a href="#" className="text-primary hover:underline">
-                      termos de uso
-                    </a>{" "}
+                    <a href="#" className="text-primary hover:underline">termos de uso</a>{" "}
                     e{" "}
-                    <a href="#" className="text-primary hover:underline">
-                      política de privacidade
-                    </a>
+                    <a href="#" className="text-primary hover:underline">politica de privacidade</a>
                   </span>
                 </div>
 
-                <Button type="submit" size="lg" className="w-full btn-animate hover-glow" disabled={!selectedRole}>
-                  {selectedRole
-                    ? `Criar conta como ${selectedRole === "produtor" ? "Produtor" : "Gestor"}`
-                    : "Selecione um tipo de usuário"}
+                <Button type="submit" size="lg" className="w-full">
+                  Criar minha conta
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>
 
               <div className="text-center text-sm text-muted-foreground">
-                Já tem uma conta?{" "}
+                Ja tem uma conta?{" "}
                 <Link href="/" className="text-primary hover:underline font-medium">
-                  Faça login
+                  Faca login
                 </Link>
               </div>
             </div>
