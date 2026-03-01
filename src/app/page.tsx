@@ -2,7 +2,7 @@
 
 import type React from "react"
 import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
+import { AppButton } from "@/src/components/app-button"
 import { Card } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
@@ -90,7 +90,6 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-11"
                 />
               </div>
 
@@ -103,7 +102,6 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-11"
                 />
               </div>
 
@@ -117,10 +115,10 @@ export default function LoginPage() {
                 </a>
               </div>
 
-              <Button type="submit" size="lg" className="w-full">
+              <AppButton type="submit" variant="primary" size="lg" className="w-full">
                 Entrar no painel
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              </AppButton>
             </form>
 
             <div className="text-center text-sm text-muted-foreground">

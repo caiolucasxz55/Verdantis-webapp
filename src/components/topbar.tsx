@@ -11,9 +11,9 @@ interface TopbarProps {
 
 export function Topbar({ title, description }: TopbarProps) {
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-8">
+    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 lg:px-8">
       <div>
-        <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+        <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
         {description && <p className="text-sm text-muted-foreground">{description}</p>}
       </div>
       <div className="flex items-center gap-3">

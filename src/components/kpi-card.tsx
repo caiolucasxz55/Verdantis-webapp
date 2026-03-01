@@ -14,7 +14,7 @@ export function KpiCard({ title, value, description, icon, trend, variant = "def
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <p
               className={cn(
-                "text-2xl font-bold",
+                "text-2xl font-semibold",
                 variant === "success" && "text-green-600",
                 variant === "danger" && "text-red-600",
                 variant === "warning" && "text-amber-600",
@@ -24,7 +24,7 @@ export function KpiCard({ title, value, description, icon, trend, variant = "def
               {value}
             </p>
             {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
+              <p className="text-sm text-muted-foreground">{description}</p>
             )}
             {trend && (
               <div className={cn("flex items-center gap-1 text-xs font-medium", trendColor)}>
@@ -33,7 +33,7 @@ export function KpiCard({ title, value, description, icon, trend, variant = "def
               </div>
             )}
           </div>
-          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <div className="h-11 w-11 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
             {icon}
           </div>
         </div>

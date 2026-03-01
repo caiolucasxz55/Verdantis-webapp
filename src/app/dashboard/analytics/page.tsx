@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
         <div className="space-y-6">
           {/* Crop Market Cards */}
           <div>
-            <h2 className="text-sm font-semibold text-foreground mb-3">Cotacoes de Mercado</h2>
+            <h2 className="text-xl font-medium text-foreground mb-4">Cotacoes de Mercado</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {cropMarketData.map((crop) => (
                 <CropMarketCard key={crop.id} {...crop} />

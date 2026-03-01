@@ -4,9 +4,10 @@ import Link from "next/link"
 import { Topbar } from "@/src/components/topbar"
 import { PageContainer } from "@/src/components/page-container"
 import { StatCard } from "@/src/components/stat-card"
-import { Button } from "@/src/components/ui/button"
+import { AppButton } from "@/src/components/app-button"
 import { Badge } from "@/src/components/ui/badge"
 import { ArrowLeft, DollarSign, TrendingUp, TrendingDown, Percent } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 
 const lot = {
   id: "1",
@@ -33,10 +34,10 @@ export default function LoteDetailPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <Link href="/dashboard/lotes">
-              <Button variant="ghost" size="sm">
+              <AppButton variant="tertiary" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar para Lotes
-              </Button>
+              </AppButton>
             </Link>
             <Badge
               variant="outline"
@@ -78,9 +79,11 @@ export default function LoteDetailPage() {
 
           {/* Production & Financial Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-card rounded-lg border border-border p-6 space-y-4">
-              <h3 className="font-semibold text-foreground">Producao</h3>
-              <div className="space-y-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Producao</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Producao Total</span>
                   <span className="font-medium text-foreground">{lot.production} sacas</span>
@@ -93,12 +96,14 @@ export default function LoteDetailPage() {
                   <span className="text-sm text-muted-foreground">Cultura</span>
                   <span className="font-medium text-foreground">{lot.crop}</span>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            <div className="bg-card rounded-lg border border-border p-6 space-y-4">
-              <h3 className="font-semibold text-foreground">Financeiro</h3>
-              <div className="space-y-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Financeiro</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Custo Total</span>
                   <span className="font-medium text-foreground">{formatCurrency(lot.cost)}</span>
@@ -109,12 +114,12 @@ export default function LoteDetailPage() {
                 </div>
                 <div className="flex items-center justify-between border-t border-border pt-3">
                   <span className="text-sm font-semibold text-foreground">Lucro Liquido</span>
-                  <span className={`font-bold text-lg ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+                  <span className={`font-semibold text-lg ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                     {formatCurrency(lot.profit)}
                   </span>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </PageContainer>

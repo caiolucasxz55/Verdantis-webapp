@@ -7,12 +7,12 @@ import Link from "next/link"
 import { Topbar } from "@/src/components/topbar"
 import { PageContainer } from "@/src/components/page-container"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card"
-import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { ArrowLeft, Save, DollarSign, TrendingUp, Percent, Package } from "lucide-react"
 import { StatCard } from "@/src/components/stat-card"
+import { AppButton } from "@/src/components/app-button"
+import { FormField } from "@/src/components/form-field"
 import type { LoteFormData } from "@/src/types"
 
 const crops = ["Milho", "Soja", "Cafe", "Trigo", "Alface", "Tomate", "Feijao", "Arroz"]
@@ -52,27 +52,26 @@ export default function NovoLotePage() {
       <PageContainer>
         <div className="space-y-6">
           <Link href="/dashboard/lotes">
-            <Button variant="ghost" size="sm">
+            <AppButton variant="tertiary" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar para Lotes
-            </Button>
+            </AppButton>
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Form */}
             <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-base">Informacoes do Lote</CardTitle>
+                <CardTitle>Informacoes do Lote</CardTitle>
                 <CardDescription>Preencha os dados reais do lote para calcular a lucratividade</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Identification */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-foreground">Identificacao</h3>
+                    <h3 className="text-lg font-medium text-foreground">Identificacao</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Nome do Lote *</Label>
+                      <FormField label="Nome do Lote *" htmlFor="name">
                         <Input
                           id="name"
                           placeholder="Ex: Lote A1"
@@ -80,9 +79,8 @@ export default function NovoLotePage() {
                           onChange={(e) => updateField("name", e.target.value)}
                           required
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Cultura *</Label>
+                      </FormField>
+                      <FormField label="Cultura *">
                         <Select value={formData.cropId} onValueChange={(v) => updateField("cropId", v)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione a cultura" />
@@ -93,16 +91,15 @@ export default function NovoLotePage() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </div>
+                      </FormField>
                     </div>
                   </div>
 
                   {/* Production & Financial */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-foreground">Producao e Financeiro</h3>
+                    <h3 className="text-lg font-medium text-foreground">Producao e Financeiro</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="production">Producao Total (sacas) *</Label>
+                      <FormField label="Producao Total (sacas) *" htmlFor="production">
                         <Input
                           id="production"
                           type="number"
@@ -112,9 +109,8 @@ export default function NovoLotePage() {
                           required
                           min="0"
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="cost">Custo Total (R$) *</Label>
+                      </FormField>
+                      <FormField label="Custo Total (R$) *" htmlFor="cost">
                         <Input
                           id="cost"
                           type="number"
@@ -125,9 +121,8 @@ export default function NovoLotePage() {
                           min="0"
                           step="0.01"
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="salePrice">Preco de Venda (R$/saca) *</Label>
+                      </FormField>
+                      <FormField label="Preco de Venda (R$/saca) *" htmlFor="salePrice">
                         <Input
                           id="salePrice"
                           type="number"
@@ -138,19 +133,19 @@ export default function NovoLotePage() {
                           min="0"
                           step="0.01"
                         />
-                      </div>
+                      </FormField>
                     </div>
                   </div>
 
                   <div className="flex gap-4 pt-4">
-                    <Button type="submit" className="flex-1">
+                    <AppButton type="submit" variant="primary" size="lg" className="flex-1">
                       <Save className="h-4 w-4 mr-2" />
                       Salvar Lote
-                    </Button>
+                    </AppButton>
                     <Link href="/dashboard/lotes" className="flex-1">
-                      <Button type="button" variant="outline" className="w-full">
+                      <AppButton type="button" variant="secondary" size="md" className="w-full">
                         Cancelar
-                      </Button>
+                      </AppButton>
                     </Link>
                   </div>
                 </form>

@@ -5,7 +5,7 @@ import { Topbar } from "@/src/components/topbar"
 import { PageContainer } from "@/src/components/page-container"
 import { StatCard } from "@/src/components/stat-card"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Button } from "@/src/components/ui/button"
+import { AppButton } from "@/src/components/app-button"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Textarea } from "@/src/components/ui/textarea"
@@ -35,10 +35,10 @@ export default function PerfilPage() {
                     Conta Verificada
                   </Badge>
                 </div>
-                <Button variant="outline" size="sm" className="w-full">
+                <AppButton variant="secondary" size="md" className="w-full">
                   <Edit className="h-4 w-4 mr-2" />
                   Alterar Foto
-                </Button>
+                </AppButton>
               </CardContent>
             </Card>
 
@@ -49,13 +49,13 @@ export default function PerfilPage() {
                   <CardTitle className="text-base">Dados Pessoais</CardTitle>
                   <CardDescription>Atualize suas informacoes de contato</CardDescription>
                 </div>
-                <Button
-                  variant={isEditing ? "default" : "outline"}
-                  size="sm"
+                <AppButton
+                  variant={isEditing ? "primary" : "secondary"}
+                  size="md"
                   onClick={() => setIsEditing(!isEditing)}
                 >
                   {isEditing ? "Salvar" : "Editar"}
-                </Button>
+                </AppButton>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">

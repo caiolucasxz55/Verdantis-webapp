@@ -7,13 +7,13 @@ import Link from "next/link"
 import { Topbar } from "@/src/components/topbar"
 import { PageContainer } from "@/src/components/page-container"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card"
-import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Textarea } from "@/src/components/ui/textarea"
 import { ArrowLeft, Save } from "lucide-react"
 import type { CultivoFormData } from "@/src/types"
+import { AppButton } from "@/src/components/app-button"
+import { FormField } from "@/src/components/form-field"
 
 const properties = [
   { id: "1", name: "Fazenda Sao Jose", lotes: [{ id: "1", name: "Lote A1" }, { id: "4", name: "Lote A3" }] },
@@ -42,86 +42,77 @@ export default function NovoCultivoPage() {
       <PageContainer>
         <div className="space-y-6">
           <Link href="/dashboard/cultivos">
-            <Button variant="ghost" size="sm">
+            <AppButton variant="tertiary" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar para Cultivos
-            </Button>
+            </AppButton>
           </Link>
 
           <Card className="max-w-2xl">
             <CardHeader>
-              <CardTitle className="text-base">Informacoes do Cultivo</CardTitle>
+              <CardTitle>Informacoes do Cultivo</CardTitle>
               <CardDescription>Preencha os dados do cultivo</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Propriedade *</Label>
+                  <FormField label="Propriedade *">
                     <Select value={formData.propertyId} onValueChange={(v) => setFormData({ ...formData, propertyId: v, loteId: "" })}>
                       <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                       <SelectContent>
                         {properties.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Lote *</Label>
+                  </FormField>
+                  <FormField label="Lote *">
                     <Select value={formData.loteId} onValueChange={(v) => setFormData({ ...formData, loteId: v })} disabled={!formData.propertyId}>
                       <SelectTrigger><SelectValue placeholder="Selecione o lote" /></SelectTrigger>
                       <SelectContent>
                         {selectedProperty?.lotes.map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </FormField>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Cultura *</Label>
+                  <FormField label="Cultura *">
                     <Select value={formData.name} onValueChange={(v) => setFormData({ ...formData, name: v })}>
                       <SelectTrigger><SelectValue placeholder="Selecione a cultura" /></SelectTrigger>
                       <SelectContent>
                         {crops.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="variety">Variedade *</Label>
+                  </FormField>
+                  <FormField label="Variedade *" htmlFor="variety">
                     <Input id="variety" placeholder="Ex: AG 8088 PRO3" value={formData.variety} onChange={(e) => setFormData({ ...formData, variety: e.target.value })} required />
-                  </div>
+                  </FormField>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="plantingDate">Data de Plantio *</Label>
+                  <FormField label="Data de Plantio *" htmlFor="plantingDate">
                     <Input id="plantingDate" type="date" value={formData.plantingDate} onChange={(e) => setFormData({ ...formData, plantingDate: e.target.value })} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="harvestDate">Previsao de Colheita *</Label>
+                  </FormField>
+                  <FormField label="Previsao de Colheita *" htmlFor="harvestDate">
                     <Input id="harvestDate" type="date" value={formData.harvestDate} onChange={(e) => setFormData({ ...formData, harvestDate: e.target.value })} required />
-                  </div>
+                  </FormField>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="area">Area Cultivada (hectares) *</Label>
+                  <FormField label="Area Cultivada (hectares) *" htmlFor="area">
                     <Input id="area" type="number" placeholder="Ex: 25" value={formData.area || ""} onChange={(e) => setFormData({ ...formData, area: Number(e.target.value) })} required min="0" step="0.01" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="expectedYield">Produtividade Esperada (sc/ha) *</Label>
+                  </FormField>
+                  <FormField label="Produtividade Esperada (sc/ha) *" htmlFor="expectedYield">
                     <Input id="expectedYield" type="number" placeholder="Ex: 180" value={formData.expectedYield || ""} onChange={(e) => setFormData({ ...formData, expectedYield: Number(e.target.value) })} required min="0" step="0.1" />
-                  </div>
+                  </FormField>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Observacoes</Label>
+                <FormField label="Observacoes" htmlFor="notes">
                   <Textarea id="notes" placeholder="Adicione observacoes sobre o cultivo..." value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} rows={3} />
-                </div>
+                </FormField>
 
                 <div className="flex gap-4 pt-4">
-                  <Button type="submit" className="flex-1"><Save className="h-4 w-4 mr-2" />Salvar Cultivo</Button>
-                  <Link href="/dashboard/cultivos" className="flex-1"><Button type="button" variant="outline" className="w-full">Cancelar</Button></Link>
+                  <AppButton type="submit" variant="primary" size="lg" className="flex-1"><Save className="h-4 w-4 mr-2" />Salvar Cultivo</AppButton>
+                  <Link href="/dashboard/cultivos" className="flex-1"><AppButton type="button" variant="secondary" size="md" className="w-full">Cancelar</AppButton></Link>
                 </div>
               </form>
             </CardContent>

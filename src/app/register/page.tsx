@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Button } from "@/src/components/ui/button"
+import { AppButton } from "@/src/components/app-button"
 import { Card } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
@@ -90,7 +90,6 @@ export default function RegisterPage() {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="h-11"
                   />
                 </div>
                 <div className="space-y-2">
@@ -103,7 +102,6 @@ export default function RegisterPage() {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="h-11"
                   />
                 </div>
               </div>
@@ -118,7 +116,6 @@ export default function RegisterPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="h-11"
                 />
               </div>
 
@@ -133,7 +130,6 @@ export default function RegisterPage() {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="h-11"
                   />
                 </div>
                 <div className="space-y-2">
@@ -146,7 +142,6 @@ export default function RegisterPage() {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
-                    className="h-11"
                   />
                 </div>
               </div>
@@ -161,10 +156,10 @@ export default function RegisterPage() {
                 </span>
               </div>
 
-              <Button type="submit" size="lg" className="w-full">
+              <AppButton type="submit" variant="primary" size="lg" className="w-full">
                 Criar minha conta
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              </AppButton>
             </form>
 
             <div className="text-center text-sm text-muted-foreground">

@@ -5,6 +5,7 @@ import { PageContainer } from "@/src/components/page-container"
 import { KpiCard } from "@/src/components/kpi-card"
 import { ChartCard } from "@/src/components/chart-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/table"
 import { Badge } from "@/src/components/ui/badge"
 import { DollarSign, TrendingUp, TrendingDown, Sprout, Grid3x3 } from "lucide-react"
 import {
@@ -159,37 +160,37 @@ export default function DashboardPage() {
             {/* Recent Lots Table */}
             <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-base">Lotes Recentes</CardTitle>
+                <CardTitle>Lotes Recentes</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 px-2 font-medium text-muted-foreground">Lote</th>
-                        <th className="text-left py-3 px-2 font-medium text-muted-foreground">Cultura</th>
-                        <th className="text-right py-3 px-2 font-medium text-muted-foreground">Custo</th>
-                        <th className="text-right py-3 px-2 font-medium text-muted-foreground">Receita</th>
-                        <th className="text-right py-3 px-2 font-medium text-muted-foreground">Lucro</th>
-                        <th className="text-center py-3 px-2 font-medium text-muted-foreground">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-transparent">
+                        <TableHead>Lote</TableHead>
+                        <TableHead>Cultura</TableHead>
+                        <TableHead className="text-right">Custo</TableHead>
+                        <TableHead className="text-right">Receita</TableHead>
+                        <TableHead className="text-right">Lucro</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                       {lots.map((lot) => (
-                        <tr key={lot.id} className="border-b border-border/50 last:border-0">
-                          <td className="py-3 px-2">
+                        <TableRow key={lot.id}>
+                          <TableCell>
                             <div>
                               <p className="font-medium text-foreground">{lot.name}</p>
                               <p className="text-xs text-muted-foreground">{lot.propertyName}</p>
                             </div>
-                          </td>
-                          <td className="py-3 px-2 text-foreground">{lot.crop}</td>
-                          <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.cost)}</td>
-                          <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.revenue)}</td>
-                          <td className={`py-3 px-2 text-right font-semibold ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+                          </TableCell>
+                          <TableCell className="text-foreground">{lot.crop}</TableCell>
+                          <TableCell className="text-right text-foreground">{formatCurrency(lot.cost)}</TableCell>
+                          <TableCell className="text-right text-foreground">{formatCurrency(lot.revenue)}</TableCell>
+                          <TableCell className={`text-right font-semibold ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                             {formatCurrency(lot.profit)}
-                          </td>
-                          <td className="py-3 px-2 text-center">
+                          </TableCell>
+                          <TableCell className="text-center">
                             <Badge
                               variant="outline"
                               className={
@@ -200,11 +201,11 @@ export default function DashboardPage() {
                             >
                               {lot.profit >= 0 ? "Lucrativo" : "Prejuizo"}
                             </Badge>
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                       ))}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
               </CardContent>
             </Card>

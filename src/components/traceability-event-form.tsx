@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Button } from "@/src/components/ui/button"
+import { AppButton } from "@/src/components/app-button"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
@@ -73,10 +73,16 @@ export function TraceabilityEventForm({ lotId, onAddEvent, disabled = false }: T
         />
       </div>
 
-      <Button type="submit" size="sm" disabled={disabled || !description.trim()} className="w-full">
+      <AppButton
+        type="submit"
+        variant="primary"
+        size="lg"
+        disabled={disabled || !description.trim()}
+        className="w-full"
+      >
         <Plus className="h-4 w-4 mr-2" />
         Registrar Evento
-      </Button>
+      </AppButton>
     </form>
   )
 }
