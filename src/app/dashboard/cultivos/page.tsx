@@ -6,21 +6,20 @@ import { PageContainer } from "@/src/components/page-container"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
 import { Badge } from "@/src/components/ui/badge"
-import { Leaf, Plus, Calendar, MapPin, TrendingUp, ChevronDown, ChevronUp, History } from "lucide-react"
+import { Leaf, Plus, Calendar, MapPin, ChevronDown, ChevronUp, History, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { ProgressIndicator } from "@/src/components/progress-indicator"
 import { TraceabilityTimeline } from "@/src/components/traceability-timeline"
 import { TraceabilityEventForm } from "@/src/components/traceability-event-form"
 import { TraceabilityHashPanel } from "@/src/components/traceability-hash-panel"
 import { CultivationExport } from "@/src/components/cultivation-export"
-import { EventsDropdown, EventsHistoryModal } from "@/src/components/events-history-modal"
 import type { Cultivo, CropStatus, TraceabilityEvent, TraceabilityHash } from "@/src/types"
 
+// Mock data without property references
 const initialCultivos: Cultivo[] = [
   {
-    id: "1", name: "Milho", lot: "Lote A3", loteId: "1", farm: "Fazenda Sao Jose", propertyId: "1",
+    id: "1", name: "Milho", lot: "Lote A3", loteId: "1",
     status: "Em Crescimento", plantingDate: "15 de Janeiro, 2025", harvestDate: "20 de Maio, 2025",
-    area: 25, daysUntilHarvest: 15, progress: 85, irrigation: true, weather: true,
+    area: 25, daysUntilHarvest: 15,
     variety: "AG 8088 PRO3", expectedYield: 180, isComplete: false,
     events: [
       { id: "e1", lotId: "1", type: "SOIL_PREPARATION", description: "Preparo do solo com aracao profunda de 30cm para melhor drenagem", timestamp: new Date("2025-01-10") },
@@ -32,9 +31,9 @@ const initialCultivos: Cultivo[] = [
     ],
   },
   {
-    id: "2", name: "Soja", lot: "Lote B1", loteId: "2", farm: "Fazenda Boa Vista", propertyId: "2",
+    id: "2", name: "Soja", lot: "Lote B1", loteId: "2",
     status: "Plantio", plantingDate: "10 de Marco, 2025", harvestDate: "15 de Julho, 2025",
-    area: 30, daysUntilHarvest: 127, progress: 15, irrigation: true, weather: true,
+    area: 30, daysUntilHarvest: 127,
     variety: "M 6210 IPRO", expectedYield: 210, isComplete: false,
     events: [
       { id: "e7", lotId: "2", type: "SOIL_PREPARATION", description: "Calagem corretiva com 2 ton/ha de calcario dolomitico", timestamp: new Date("2025-02-20") },
@@ -42,9 +41,9 @@ const initialCultivos: Cultivo[] = [
     ],
   },
   {
-    id: "3", name: "Alface", lot: "Lote C2", loteId: "3", farm: "Fazenda Verde", propertyId: "3",
+    id: "3", name: "Alface", lot: "Lote C2", loteId: "3",
     status: "Colheita", plantingDate: "20 de Fevereiro, 2025", harvestDate: "05 de Abril, 2025",
-    area: 15, daysUntilHarvest: 0, progress: 100, irrigation: true, weather: true,
+    area: 15, daysUntilHarvest: 0,
     variety: "Crespa", expectedYield: 45, isComplete: true,
     traceabilityHash: {
       lotId: "3",
@@ -85,6 +84,141 @@ function generateHash(events: TraceabilityEvent[], lotId: string): string {
   return `0x${hex}${lotId.padStart(4, "0")}${"a3f7b2c1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0".slice(0, 52)}`
 }
 
+// Recent Events Preview Component (outside card, max 10 events with pagination)
+function RecentEventsPreview({ events, cultivoName, lotName }: { events: TraceabilityEvent[], cultivoName: string, lotName: string }) {
+  const [currentPage, setCurrentPage] = useState(0)
+  const eventsPerPage = 10
+  const sortedEvents = [...events].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  const totalPages = Math.ceil(sortedEvents.length / eventsPerPage)
+  const displayedEvents = sortedEvents.slice(currentPage * eventsPerPage, (currentPage + 1) * eventsPerPage)
+
+  const eventTypeLabels: Record<string, string> = {
+    "INPUT_ADDITION": "Adicao de Insumos",
+    "IRRIGATION": "Irrigacao",
+    "HARVEST": "Colheita",
+    "PEST_CONTROL": "Controle de Pragas",
+    "SOIL_PREPARATION": "Preparo do Solo",
+    "PRUNING": "Poda",
+    "FERTILIZATION": "Adubacao",
+    "INSPECTION": "Inspecao",
+    "OTHER": "Outro",
+  }
+
+  if (events.length === 0) {
+    return (
+      <div className="text-center py-6 text-sm text-muted-foreground border border-dashed border-border rounded-lg">
+        Nenhum evento registrado ainda
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
+          <History className="h-4 w-4 text-primary" />
+          Eventos Recentes - {cultivoName} ({lotName})
+        </h4>
+        <Badge variant="outline" className="text-xs">{events.length} eventos</Badge>
+      </div>
+      
+      <div className="border border-border rounded-lg divide-y divide-border">
+        {displayedEvents.map((event) => (
+          <div key={event.id} className="p-3 hover:bg-muted/50 transition-colors">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground">
+                  {eventTypeLabels[event.type] || event.type}
+                </p>
+                <p className="text-sm text-muted-foreground line-clamp-1 mt-0.5">
+                  {event.description}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground whitespace-nowrap">
+                {new Date(event.timestamp).toLocaleDateString("pt-BR")}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Pagina {currentPage + 1} de {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Full Event History with Pagination (inside card, no limit)
+function FullEventHistory({ events }: { events: TraceabilityEvent[] }) {
+  const [currentPage, setCurrentPage] = useState(0)
+  const eventsPerPage = 10
+  const sortedEvents = [...events].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  const totalPages = Math.ceil(sortedEvents.length / eventsPerPage)
+  const displayedEvents = sortedEvents.slice(currentPage * eventsPerPage, (currentPage + 1) * eventsPerPage)
+
+  if (events.length === 0) {
+    return (
+      <div className="text-center py-4 text-sm text-muted-foreground">
+        Nenhum evento registrado
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="border border-border rounded-lg max-h-[400px] overflow-y-auto">
+        <TraceabilityTimeline events={displayedEvents} />
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            {currentPage + 1} / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 interface CropLotCardProps {
   cultivo: Cultivo
   onAddEvent: (cultivoId: string, event: TraceabilityEvent) => void
@@ -93,7 +227,6 @@ interface CropLotCardProps {
 
 function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
   const [expanded, setExpanded] = useState(false)
-  const [showFullHistory, setShowFullHistory] = useState(false)
   const events = cultivo.events || []
   const isComplete = cultivo.isComplete || false
 
@@ -109,16 +242,15 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
               <CardTitle className="text-lg">{cultivo.name} - {cultivo.lot}</CardTitle>
               <CardDescription className="flex items-center mt-1">
                 <MapPin className="h-3 w-3 mr-1" />
-                {cultivo.farm}
+                Variedade: {cultivo.variety}
               </CardDescription>
-              <p className="text-sm text-muted-foreground mt-0.5">Variedade: {cultivo.variety}</p>
             </div>
           </div>
           <Badge variant="outline" className={getStatusColor(cultivo.status)}>{cultivo.status}</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-5">
-        {/* Info row */}
+        {/* Essential Info Only - NO progress bars */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -128,7 +260,7 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Calendar className="h-3 w-3" /> Colheita
+              <Calendar className="h-3 w-3" /> Colheita Est.
             </p>
             <p className="font-medium text-foreground text-sm">{cultivo.harvestDate}</p>
           </div>
@@ -137,25 +269,22 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
             <p className="font-medium text-foreground text-sm">{cultivo.area} ha</p>
           </div>
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <TrendingUp className="h-3 w-3" /> Produtividade
-            </p>
-            <p className="font-medium text-foreground text-sm">{cultivo.expectedYield} sc/ha</p>
+            <p className="text-xs text-muted-foreground">Eventos</p>
+            <p className="font-medium text-foreground text-sm">{events.length} registrados</p>
           </div>
         </div>
 
-        {/* Progress Indicator */}
-        <ProgressIndicator currentStatus={cultivo.status} />
-
-        {/* Events Dropdown Preview */}
-        <div className="space-y-3">
-          <EventsDropdown 
-            events={events} 
-            cultivoName={cultivo.name} 
-            lotName={cultivo.lot}
-            maxPreviewEvents={10}
-          />
-        </div>
+        {/* Traceability Hash Indicator */}
+        {cultivo.traceabilityHash && (
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+            <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-700">
+              Rastreabilidade Finalizada
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              Hash: {cultivo.traceabilityHash.hash.slice(0, 16)}...
+            </span>
+          </div>
+        )}
 
         {/* Expand/Collapse Traceability Management */}
         <Button
@@ -177,11 +306,13 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
           )}
         </Button>
 
+        {/* INSIDE CARD: Full traceability management */}
         {expanded && (
-          <div className="space-y-6 pt-2">
+          <div className="space-y-6 pt-4 border-t border-border">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Event form */}
-              <div className="space-y-4">
+              {/* Left Column: Event Form + Hash Panel */}
+              <div className="space-y-6">
+                {/* Add New Event */}
                 {!isComplete && (
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-foreground">Registrar Novo Evento</h4>
@@ -193,7 +324,7 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
                   </div>
                 )}
 
-                {/* Hash panel */}
+                {/* Hash Panel */}
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-foreground">Hash de Rastreabilidade</h4>
                   <TraceabilityHashPanel
@@ -202,16 +333,25 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
                     canGenerate={events.length > 0 && !isComplete}
                   />
                 </div>
+
+                {/* Finish Cultivation Export */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-foreground">Finalizar Cultivo</h4>
+                  <CultivationExport 
+                    cultivo={cultivo}
+                    farmerName="Joao Paulo"
+                    onFinish={() => onFinalize(cultivo.id)}
+                  />
+                </div>
               </div>
 
-              {/* Finish Cultivation Export */}
+              {/* Right Column: Full Event History (no limit, with pagination) */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Finalizar Cultivo</h4>
-                <CultivationExport 
-                  cultivo={cultivo}
-                  farmerName="Joao Paulo"
-                  onFinish={() => onFinalize(cultivo.id)}
-                />
+                <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <History className="h-4 w-4" />
+                  Historico Completo de Eventos
+                </h4>
+                <FullEventHistory events={events} />
               </div>
             </div>
           </div>
@@ -265,6 +405,19 @@ export default function CultivosPage() {
             </Link>
           </div>
 
+          {/* OUTSIDE CARDS: Recent Events Preview (max 10 per cultivation) */}
+          <div className="space-y-4">
+            {cultivos.map((cultivo) => (
+              <RecentEventsPreview
+                key={`preview-${cultivo.id}`}
+                events={cultivo.events || []}
+                cultivoName={cultivo.name}
+                lotName={cultivo.lot}
+              />
+            ))}
+          </div>
+
+          {/* Cultivation Cards */}
           <div className="space-y-4">
             {cultivos.map((cultivo) => (
               <CropLotCard
