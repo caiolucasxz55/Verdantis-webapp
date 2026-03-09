@@ -36,7 +36,6 @@ Informacoes do Cultivo
 Cultura: ${cultivo.name}
 Variedade: ${cultivo.variety}
 Lote: ${cultivo.lot}
-Propriedade: ${cultivo.farm}
 Area: ${cultivo.area} hectares
 Produtividade Esperada: ${cultivo.expectedYield} sc/ha
 
@@ -93,7 +92,7 @@ export function CultivationExport({ cultivo, farmerName, onFinish }: Cultivation
     const qrData = JSON.stringify({
       cultivation: cultivo.name,
       lot: cultivo.lot,
-      farm: cultivo.farm,
+      variety: cultivo.variety,
       plantingDate: cultivo.plantingDate,
       harvestDate: cultivo.harvestDate,
       eventCount: events.length,
