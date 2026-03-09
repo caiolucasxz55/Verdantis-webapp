@@ -19,7 +19,7 @@ const lot = {
   profit: 4225,
   margin: 26.9,
   status: "Ativo" as const,
-  area: 25,
+  propertyName: "Fazenda Sao Jose",
 }
 
 const formatCurrency = (value: number) =>
@@ -28,7 +28,7 @@ const formatCurrency = (value: number) =>
 export default function LoteDetailPage() {
   return (
     <>
-      <Topbar title={`Lote ${lot.name}`} description={`${lot.crop} - ${lot.area} ha`} />
+      <Topbar title={`Lote ${lot.name}`} description={`${lot.propertyName} - ${lot.crop}`} />
       <PageContainer>
         <div className="space-y-6">
           <div className="flex items-center justify-between">

@@ -1,7 +1,7 @@
 // User Role Type - Only Farmer
 export type UserRole = "produtor"
 
-// Lot Interface with profitability (no property reference)
+// Lot Interface with profitability (no estimated fields)
 export interface Lote {
   id: string
   name: string
@@ -13,7 +13,7 @@ export interface Lote {
   profit: number
   margin: number
   status: "Ativo" | "Finalizado" | "Em Preparo"
-  area?: number
+  propertyName: string
 }
 
 // Lot Form Data (solid, real-world fields only)
@@ -70,19 +70,21 @@ export interface CropData {
   id: string
   name: string
   lot: string
+  farm: string
   status: CropStatus
   plantingDate: string
   harvestDate: string
   area: number
-  daysUntilHarvest?: number
-  progress?: number
-  irrigation?: boolean
-  weather?: boolean
+  daysUntilHarvest: number
+  progress: number
+  irrigation: boolean
+  weather: boolean
 }
 
-// Cultivo (Cultivation) Interface - no property reference
+// Cultivo (Cultivation) Interface
 export interface Cultivo extends CropData {
   loteId: string
+  propertyId: string
   variety: string
   expectedYield: number
   actualYield?: number
@@ -95,6 +97,7 @@ export interface Cultivo extends CropData {
 export interface CultivoFormData {
   name: string
   loteId: string
+  propertyId: string
   variety: string
   plantingDate: string
   harvestDate: string
