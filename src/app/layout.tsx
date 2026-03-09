@@ -5,10 +5,10 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Verdantis - VITS',
-  description: 'Sistema de Rastreamento Visual de Informações - Transparência do campo ao mercado',
- icons: {
-    icon: '/agro-logo-2.png', 
+  title: 'Verdantis - Gestao Agricola',
+  description: 'Plataforma de gestao agricola para produtores rurais - Controle lotes, cultivos e lucratividade',
+  icons: {
+    icon: '/agro-logo-2.png',
   },
 }
 
