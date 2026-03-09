@@ -6,12 +6,14 @@ import { PageContainer } from "@/src/components/page-container"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
 import { Badge } from "@/src/components/ui/badge"
-import { Leaf, Plus, Calendar, MapPin, TrendingUp, ChevronDown, ChevronUp } from "lucide-react"
+import { Leaf, Plus, Calendar, MapPin, TrendingUp, ChevronDown, ChevronUp, History } from "lucide-react"
 import Link from "next/link"
 import { ProgressIndicator } from "@/src/components/progress-indicator"
 import { TraceabilityTimeline } from "@/src/components/traceability-timeline"
 import { TraceabilityEventForm } from "@/src/components/traceability-event-form"
 import { TraceabilityHashPanel } from "@/src/components/traceability-hash-panel"
+import { CultivationExport } from "@/src/components/cultivation-export"
+import { EventsDropdown, EventsHistoryModal } from "@/src/components/events-history-modal"
 import type { Cultivo, CropStatus, TraceabilityEvent, TraceabilityHash } from "@/src/types"
 
 const initialCultivos: Cultivo[] = [
@@ -21,16 +23,23 @@ const initialCultivos: Cultivo[] = [
     area: 25, daysUntilHarvest: 15, progress: 85, irrigation: true, weather: true,
     variety: "AG 8088 PRO3", expectedYield: 180, isComplete: false,
     events: [
-      { id: "e1", lotId: "1", type: "INPUT_ADDITION", description: "Aplicacao de fertilizante NPK 10-10-10, 200kg/ha", timestamp: new Date("2025-01-20") },
-      { id: "e2", lotId: "1", type: "IRRIGATION", description: "Irrigacao por gotejamento - 4 horas", timestamp: new Date("2025-02-05") },
-      { id: "e3", lotId: "1", type: "INPUT_ADDITION", description: "Aplicacao de defensivo contra lagarta-do-cartucho", timestamp: new Date("2025-03-10") },
+      { id: "e1", lotId: "1", type: "SOIL_PREPARATION", description: "Preparo do solo com aracao profunda de 30cm para melhor drenagem", timestamp: new Date("2025-01-10") },
+      { id: "e2", lotId: "1", type: "INPUT_ADDITION", description: "Aplicacao de fertilizante NPK 10-10-10, 200kg/ha em toda area do lote", timestamp: new Date("2025-01-20") },
+      { id: "e3", lotId: "1", type: "IRRIGATION", description: "Irrigacao por gotejamento - sistema ativado por 4 horas", timestamp: new Date("2025-02-05") },
+      { id: "e4", lotId: "1", type: "PEST_CONTROL", description: "Aplicacao de defensivo biologico contra lagarta-do-cartucho", timestamp: new Date("2025-03-10") },
+      { id: "e5", lotId: "1", type: "FERTILIZATION", description: "Adubacao de cobertura com ureia, 150kg/ha", timestamp: new Date("2025-03-25") },
+      { id: "e6", lotId: "1", type: "INSPECTION", description: "Inspecao visual - plantas saudaveis, altura media 1.8m", timestamp: new Date("2025-04-05") },
     ],
   },
   {
     id: "2", name: "Soja", lot: "Lote B1", loteId: "2", farm: "Fazenda Boa Vista", propertyId: "2",
     status: "Plantio", plantingDate: "10 de Marco, 2025", harvestDate: "15 de Julho, 2025",
     area: 30, daysUntilHarvest: 127, progress: 15, irrigation: true, weather: true,
-    variety: "M 6210 IPRO", expectedYield: 210, isComplete: false, events: [],
+    variety: "M 6210 IPRO", expectedYield: 210, isComplete: false,
+    events: [
+      { id: "e7", lotId: "2", type: "SOIL_PREPARATION", description: "Calagem corretiva com 2 ton/ha de calcario dolomitico", timestamp: new Date("2025-02-20") },
+      { id: "e8", lotId: "2", type: "INPUT_ADDITION", description: "Inoculacao de sementes com Bradyrhizobium japonicum", timestamp: new Date("2025-03-08") },
+    ],
   },
   {
     id: "3", name: "Alface", lot: "Lote C2", loteId: "3", farm: "Fazenda Verde", propertyId: "3",
@@ -44,11 +53,12 @@ const initialCultivos: Cultivo[] = [
       eventCount: 5,
     },
     events: [
-      { id: "e4", lotId: "3", type: "INPUT_ADDITION", description: "Adubacao organica com composto", timestamp: new Date("2025-02-22") },
-      { id: "e5", lotId: "3", type: "IRRIGATION", description: "Irrigacao por aspersao", timestamp: new Date("2025-03-01") },
-      { id: "e6", lotId: "3", type: "INPUT_ADDITION", description: "Aplicacao de calcario dolomitico", timestamp: new Date("2025-03-10") },
-      { id: "e7", lotId: "3", type: "OTHER", description: "Inspecao de qualidade - folhas saudaveis", timestamp: new Date("2025-03-25") },
-      { id: "e8", lotId: "3", type: "HARVEST", description: "Colheita manual - 42 sacas colhidas", timestamp: new Date("2025-04-05") },
+      { id: "e9", lotId: "3", type: "SOIL_PREPARATION", description: "Preparo de canteiros com composto organico incorporado", timestamp: new Date("2025-02-18") },
+      { id: "e10", lotId: "3", type: "INPUT_ADDITION", description: "Adubacao organica com composto curtido, 5kg/m2", timestamp: new Date("2025-02-22") },
+      { id: "e11", lotId: "3", type: "IRRIGATION", description: "Irrigacao por aspersao - 15 minutos, 2x ao dia", timestamp: new Date("2025-03-01") },
+      { id: "e12", lotId: "3", type: "FERTILIZATION", description: "Aplicacao de calcario dolomitico para correcao de pH", timestamp: new Date("2025-03-10") },
+      { id: "e13", lotId: "3", type: "INSPECTION", description: "Inspecao de qualidade - folhas saudaveis, sem pragas detectadas", timestamp: new Date("2025-03-25") },
+      { id: "e14", lotId: "3", type: "HARVEST", description: "Colheita manual realizada - 42 sacas colhidas com sucesso", timestamp: new Date("2025-04-05") },
     ],
   },
 ]
@@ -83,6 +93,7 @@ interface CropLotCardProps {
 
 function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
   const [expanded, setExpanded] = useState(false)
+  const [showFullHistory, setShowFullHistory] = useState(false)
   const events = cultivo.events || []
   const isComplete = cultivo.isComplete || false
 
@@ -136,7 +147,17 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
         {/* Progress Indicator */}
         <ProgressIndicator currentStatus={cultivo.status} />
 
-        {/* Expand/Collapse Traceability */}
+        {/* Events Dropdown Preview */}
+        <div className="space-y-3">
+          <EventsDropdown 
+            events={events} 
+            cultivoName={cultivo.name} 
+            lotName={cultivo.lot}
+            maxPreviewEvents={10}
+          />
+        </div>
+
+        {/* Expand/Collapse Traceability Management */}
         <Button
           variant="outline"
           size="sm"
@@ -146,12 +167,12 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
           {expanded ? (
             <>
               <ChevronUp className="h-4 w-4 mr-2" />
-              Ocultar Rastreabilidade
+              Ocultar Gerenciamento
             </>
           ) : (
             <>
               <ChevronDown className="h-4 w-4 mr-2" />
-              Ver Rastreabilidade ({events.length} eventos)
+              Gerenciar Rastreabilidade
             </>
           )}
         </Button>
@@ -159,17 +180,11 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
         {expanded && (
           <div className="space-y-6 pt-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Timeline */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-foreground">Timeline de Eventos</h4>
-                <TraceabilityTimeline events={events} />
-              </div>
-
-              {/* Event form + Hash panel */}
+              {/* Event form */}
               <div className="space-y-4">
                 {!isComplete && (
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-foreground">Registrar Evento</h4>
+                    <h4 className="text-sm font-semibold text-foreground">Registrar Novo Evento</h4>
                     <TraceabilityEventForm
                       lotId={cultivo.id}
                       onAddEvent={(event) => onAddEvent(cultivo.id, event)}
@@ -177,6 +192,8 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
                     />
                   </div>
                 )}
+
+                {/* Hash panel */}
                 <div className="space-y-3">
                   <h4 className="text-sm font-semibold text-foreground">Hash de Rastreabilidade</h4>
                   <TraceabilityHashPanel
@@ -185,6 +202,16 @@ function CropLotCard({ cultivo, onAddEvent, onFinalize }: CropLotCardProps) {
                     canGenerate={events.length > 0 && !isComplete}
                   />
                 </div>
+              </div>
+
+              {/* Finish Cultivation Export */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-foreground">Finalizar Cultivo</h4>
+                <CultivationExport 
+                  cultivo={cultivo}
+                  farmerName="Joao Paulo"
+                  onFinish={() => onFinalize(cultivo.id)}
+                />
               </div>
             </div>
           </div>

@@ -4,9 +4,11 @@ import { Topbar } from "@/src/components/topbar"
 import { PageContainer } from "@/src/components/page-container"
 import { KpiCard } from "@/src/components/kpi-card"
 import { ChartCard } from "@/src/components/chart-card"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
-import { DollarSign, TrendingUp, TrendingDown, Sprout, Grid3x3 } from "lucide-react"
+import { Button } from "@/src/components/ui/button"
+import { DollarSign, TrendingUp, TrendingDown, Sprout, Grid3x3, ArrowRight, Calendar, Leaf, Activity, Clock } from "lucide-react"
+import Link from "next/link"
 import {
   BarChart,
   Bar,
@@ -42,19 +44,20 @@ const profitOverTime = [
   { month: "Abr", lucro: 4100 },
   { month: "Mai", lucro: 3800 },
   { month: "Jun", lucro: 5200 },
-  { month: "Jul", lucro: 4800 },
-  { month: "Ago", lucro: 6100 },
-  { month: "Set", lucro: 5400 },
-  { month: "Out", lucro: 7200 },
-  { month: "Nov", lucro: 6800 },
-  { month: "Dez", lucro: 8500 },
 ]
 
-const profitByCrop = [
-  { crop: "Milho", lucro: 10575 },
-  { crop: "Soja", lucro: 10400 },
-  { crop: "Trigo", lucro: 1900 },
-  { crop: "Cafe", lucro: -2700 },
+const recentActivity = [
+  { id: "1", type: "event", title: "Irrigacao realizada", description: "Lote A1 - Fazenda Sao Jose", time: "2 horas atras", icon: Activity },
+  { id: "2", type: "cultivation", title: "Novo cultivo iniciado", description: "Soja - Lote B1", time: "5 horas atras", icon: Sprout },
+  { id: "3", type: "harvest", title: "Colheita finalizada", description: "Alface - Lote C2", time: "1 dia atras", icon: Leaf },
+  { id: "4", type: "event", title: "Aplicacao de fertilizante", description: "Lote E5 - Fazenda Boa Vista", time: "2 dias atras", icon: Activity },
+  { id: "5", type: "lot", title: "Novo lote cadastrado", description: "Lote F6 - Fazenda Verde", time: "3 dias atras", icon: Grid3x3 },
+]
+
+const upcomingHarvests = [
+  { id: "1", crop: "Milho", lot: "Lote A3", date: "20 de Maio, 2025", daysRemaining: 15 },
+  { id: "2", crop: "Soja", lot: "Lote B1", date: "15 de Julho, 2025", daysRemaining: 127 },
+  { id: "3", crop: "Trigo", lot: "Lote D4", date: "10 de Agosto, 2025", daysRemaining: 153 },
 ]
 
 const tooltipStyle = {
@@ -68,8 +71,8 @@ export default function DashboardPage() {
   const totalProfit = lots.reduce((sum, l) => sum + l.profit, 0)
   const totalRevenue = lots.reduce((sum, l) => sum + l.revenue, 0)
   const totalCost = lots.reduce((sum, l) => sum + l.cost, 0)
-  const mostProfitableCrop = profitByCrop.reduce((prev, curr) => (curr.lucro > prev.lucro ? curr : prev))
-  const mostProfitableLot = lots.reduce((prev, curr) => (curr.profit > prev.profit ? curr : prev))
+  const activeLots = lots.filter(l => l.status === "Ativo").length
+  const activeCultivos = 3
 
   const formatCurrency = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -79,8 +82,36 @@ export default function DashboardPage() {
       <Topbar title="Dashboard" description="Visao geral da sua producao" />
       <PageContainer>
         <div className="space-y-8">
+          {/* Welcome Section */}
+          <Card className="bg-primary/5 border-primary/20">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground mb-1">Bem-vindo de volta, Joao!</h2>
+                  <p className="text-muted-foreground">
+                    Voce tem {activeLots} lotes ativos e {activeCultivos} cultivos em andamento.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <Link href="/dashboard/lotes/novo">
+                    <Button variant="outline" size="sm">
+                      <Grid3x3 className="h-4 w-4 mr-2" />
+                      Novo Lote
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard/cultivos/novo">
+                    <Button size="sm">
+                      <Sprout className="h-4 w-4 mr-2" />
+                      Novo Cultivo
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* KPIs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <KpiCard
               title="Lucro Total"
               value={formatCurrency(totalProfit)}
@@ -102,15 +133,9 @@ export default function DashboardPage() {
               trend={{ value: -3, label: "reducao" }}
             />
             <KpiCard
-              title="Cultura Mais Lucrativa"
-              value={mostProfitableCrop.crop}
-              description={formatCurrency(mostProfitableCrop.lucro)}
-              icon={<Sprout className="h-5 w-5 text-primary" />}
-            />
-            <KpiCard
-              title="Lote Mais Lucrativo"
-              value={mostProfitableLot.name}
-              description={formatCurrency(mostProfitableLot.profit)}
+              title="Lotes Ativos"
+              value={String(activeLots)}
+              description={`${lots.length} lotes cadastrados`}
               icon={<Grid3x3 className="h-5 w-5 text-primary" />}
             />
           </div>
@@ -118,7 +143,7 @@ export default function DashboardPage() {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ChartCard title="Lucro por Lote" description="Comparativo de desempenho financeiro">
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={profitByLot}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
@@ -129,8 +154,8 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="Lucro ao Longo do Tempo" description="Evolucao mensal do lucro">
-              <ResponsiveContainer width="100%" height={300}>
+            <ChartCard title="Evolucao do Lucro" description="Ultimos 6 meses">
+              <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={profitOverTime}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis dataKey="month" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
@@ -142,73 +167,121 @@ export default function DashboardPage() {
             </ChartCard>
           </div>
 
-          {/* Profit by crop + Recent lots table */}
+          {/* Activity and Upcoming Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <ChartCard title="Lucro por Cultura" description="Performance de cada cultura">
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={profitByCrop} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis type="number" tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
-                  <YAxis dataKey="crop" type="category" width={60} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
-                  <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={tooltipStyle} />
-                  <Bar dataKey="lucro" radius={[0, 4, 4, 0]} name="Lucro" fill="var(--chart-2)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
-
-            {/* Recent Lots Table */}
+            {/* Recent Activity */}
             <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="text-base">Lotes Recentes</CardTitle>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-base">Atividade Recente</CardTitle>
+                  <CardDescription>Ultimas acoes na plataforma</CardDescription>
+                </div>
+                <Link href="/dashboard/cultivos">
+                  <Button variant="ghost" size="sm" className="text-primary">
+                    Ver tudo
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </Link>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 px-2 font-medium text-muted-foreground">Lote</th>
-                        <th className="text-left py-3 px-2 font-medium text-muted-foreground">Cultura</th>
-                        <th className="text-right py-3 px-2 font-medium text-muted-foreground">Custo</th>
-                        <th className="text-right py-3 px-2 font-medium text-muted-foreground">Receita</th>
-                        <th className="text-right py-3 px-2 font-medium text-muted-foreground">Lucro</th>
-                        <th className="text-center py-3 px-2 font-medium text-muted-foreground">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {lots.map((lot) => (
-                        <tr key={lot.id} className="border-b border-border/50 last:border-0">
-                          <td className="py-3 px-2">
-                            <div>
-                              <p className="font-medium text-foreground">{lot.name}</p>
-                              <p className="text-xs text-muted-foreground">{lot.propertyName}</p>
-                            </div>
-                          </td>
-                          <td className="py-3 px-2 text-foreground">{lot.crop}</td>
-                          <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.cost)}</td>
-                          <td className="py-3 px-2 text-right text-foreground">{formatCurrency(lot.revenue)}</td>
-                          <td className={`py-3 px-2 text-right font-semibold ${lot.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
-                            {formatCurrency(lot.profit)}
-                          </td>
-                          <td className="py-3 px-2 text-center">
-                            <Badge
-                              variant="outline"
-                              className={
-                                lot.profit >= 0
-                                  ? "border-green-500/30 bg-green-500/10 text-green-700"
-                                  : "border-red-500/30 bg-red-500/10 text-red-700"
-                              }
-                            >
-                              {lot.profit >= 0 ? "Lucrativo" : "Prejuizo"}
-                            </Badge>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-4">
+                  {recentActivity.map((activity) => {
+                    const Icon = activity.icon
+                    return (
+                      <div key={activity.id} className="flex items-start gap-4">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <Icon className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground">{activity.title}</p>
+                          <p className="text-sm text-muted-foreground truncate">{activity.description}</p>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+                          <Clock className="h-3 w-3" />
+                          {activity.time}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
+
+            {/* Upcoming Harvests */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Proximas Colheitas</CardTitle>
+                <CardDescription>Cultivos proximos da colheita</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {upcomingHarvests.map((harvest) => (
+                    <div key={harvest.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Calendar className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground">{harvest.crop}</p>
+                        <p className="text-xs text-muted-foreground">{harvest.lot}</p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={
+                          harvest.daysRemaining <= 30
+                            ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
+                            : "border-muted-foreground/30 bg-muted text-muted-foreground"
+                        }
+                      >
+                        {harvest.daysRemaining}d
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+                <Link href="/dashboard/cultivos" className="block mt-4">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Ver todos os cultivos
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Acoes Rapidas</CardTitle>
+              <CardDescription>Acesse rapidamente as principais funcionalidades</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Link href="/dashboard/lotes">
+                  <div className="p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors cursor-pointer text-center">
+                    <Grid3x3 className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium text-foreground">Gerenciar Lotes</p>
+                  </div>
+                </Link>
+                <Link href="/dashboard/cultivos">
+                  <div className="p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors cursor-pointer text-center">
+                    <Sprout className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium text-foreground">Ver Cultivos</p>
+                  </div>
+                </Link>
+                <Link href="/dashboard/analytics">
+                  <div className="p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors cursor-pointer text-center">
+                    <TrendingUp className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium text-foreground">Analytics</p>
+                  </div>
+                </Link>
+                <Link href="/dashboard/simulacao">
+                  <div className="p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors cursor-pointer text-center">
+                    <Activity className="h-6 w-6 text-primary mx-auto mb-2" />
+                    <p className="text-sm font-medium text-foreground">Simulacoes</p>
+                  </div>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </PageContainer>
     </>
