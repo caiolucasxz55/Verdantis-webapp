@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
-import { AppButton } from "@/src/components/app-button"
 import { Badge } from "@/src/components/ui/badge"
 import { Copy, ShieldCheck, Hash } from "lucide-react"
 import { useState } from "react"
@@ -38,16 +37,10 @@ export function TraceabilityHashPanel({ hash, onGenerate, canGenerate }: Traceab
                 Finalize o cultivo para gerar o hash de rastreabilidade
               </p>
             </div>
-            <AppButton
-              onClick={onGenerate}
-              disabled={!canGenerate}
-              size="lg"
-              variant="primary"
-              className="mt-2"
-            >
+            <Button onClick={onGenerate} disabled={!canGenerate} size="sm" className="mt-2">
               <ShieldCheck className="h-4 w-4 mr-2" />
               Finalizar Cultivo
-            </AppButton>
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -75,7 +68,7 @@ export function TraceabilityHashPanel({ hash, onGenerate, canGenerate }: Traceab
             <code className="flex-1 bg-muted px-3 py-2 rounded-md text-xs font-mono text-foreground break-all">
               {hash.hash}
             </code>
-            <Button variant="ghost" size="icon" className="shrink-0" onClick={handleCopy}>
+            <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={handleCopy}>
               <Copy className="h-3.5 w-3.5" />
               <span className="sr-only">Copiar hash</span>
             </Button>

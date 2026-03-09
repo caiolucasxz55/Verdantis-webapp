@@ -1,7 +1,7 @@
 // User Role Type - Only Farmer
 export type UserRole = "produtor"
 
-// Lot Interface with profitability (no estimated fields)
+// Lot Interface with profitability (no property reference)
 export interface Lote {
   id: string
   name: string
@@ -13,7 +13,7 @@ export interface Lote {
   profit: number
   margin: number
   status: "Ativo" | "Finalizado" | "Em Preparo"
-  propertyName: string
+  area?: number
 }
 
 // Lot Form Data (solid, real-world fields only)
@@ -70,21 +70,19 @@ export interface CropData {
   id: string
   name: string
   lot: string
-  farm: string
   status: CropStatus
   plantingDate: string
   harvestDate: string
   area: number
-  daysUntilHarvest: number
-  progress: number
-  irrigation: boolean
-  weather: boolean
+  daysUntilHarvest?: number
+  progress?: number
+  irrigation?: boolean
+  weather?: boolean
 }
 
-// Cultivo (Cultivation) Interface
+// Cultivo (Cultivation) Interface - no property reference
 export interface Cultivo extends CropData {
   loteId: string
-  propertyId: string
   variety: string
   expectedYield: number
   actualYield?: number
@@ -97,7 +95,6 @@ export interface Cultivo extends CropData {
 export interface CultivoFormData {
   name: string
   loteId: string
-  propertyId: string
   variety: string
   plantingDate: string
   harvestDate: string
@@ -107,7 +104,16 @@ export interface CultivoFormData {
 }
 
 // Traceability Event System
-export type TraceabilityEventType = "INPUT_ADDITION" | "IRRIGATION" | "HARVEST" | "OTHER"
+export type TraceabilityEventType = 
+  | "INPUT_ADDITION" 
+  | "IRRIGATION" 
+  | "HARVEST" 
+  | "PEST_CONTROL"
+  | "SOIL_PREPARATION"
+  | "PRUNING"
+  | "FERTILIZATION"
+  | "INSPECTION"
+  | "OTHER"
 
 export interface TraceabilityEvent {
   id: string
@@ -150,4 +156,38 @@ export interface UserProfile {
   location: string
   bio: string
   memberSince: string
+}
+
+// Simulation Types
+export interface SimulationLot {
+  id: string
+  name: string
+  isTemporary: boolean
+  area: number
+  crop: string
+}
+
+export interface SimulationScenario {
+  id: string
+  name: string
+  lot: SimulationLot
+  estimatedYield: number
+  estimatedPrice: number
+  estimatedCost: number
+  laborCost: number
+  inputCost: number
+  otherCosts: number
+  createdAt: Date
+}
+
+export interface SimulationResult {
+  id: string
+  scenario: SimulationScenario
+  totalRevenue: number
+  totalCost: number
+  profit: number
+  margin: number
+  roi: number
+  breakEvenPrice: number
+  breakEvenYield: number
 }

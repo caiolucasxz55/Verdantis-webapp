@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/src/components/ui/button"
-import { Home, Grid3x3, Sprout, BarChart3, User, LogOut, Leaf } from "lucide-react"
+import { Home, Grid3x3, Sprout, BarChart3, User, LogOut, Leaf, Calculator } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/src/lib/utils"
@@ -10,6 +10,7 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Lotes", href: "/dashboard/lotes", icon: Grid3x3 },
   { name: "Cultivos", href: "/dashboard/cultivos", icon: Sprout },
+  { name: "Simulacoes", href: "/dashboard/simulacao", icon: Calculator },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
   { name: "Perfil", href: "/dashboard/perfil", icon: User },
 ]
